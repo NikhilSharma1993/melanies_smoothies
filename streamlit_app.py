@@ -13,15 +13,7 @@ name_on_order = st.text_input('Name on Smoothie:')
 if name_on_order:
     st.write('The name on your smoothie will be:', name_on_order)
 
-# Mocked DataFrame as Snowflake is not used
-import pandas as pd
-pd_df = pd.DataFrame({
-    "FRUIT_NAME": ["Apple", "Blueberries", "Jackfruit", "Kiwi", "Strawberries"],
-    "SEARCH_ON": ["Apple", "Blueberry", "Jackfruit", "Kiwi", "Strawberry"]
-})
 
-# Use FRUIT_NAME column for the multiselect options
-fruit_options = pd_df['FRUIT_NAME'].tolist()
 
 ingredients_list = st.multiselect(
     'Choose up to 5 ingredients:',
