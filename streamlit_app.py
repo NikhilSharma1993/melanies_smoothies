@@ -23,10 +23,10 @@ pd_df = pd.DataFrame({
 # Use FRUIT_NAME column for the multiselect options
 fruit_options = pd_df['FRUIT_NAME'].tolist()
 
+# Removed the max_selections argument to allow any number of selections
 ingredients_list = st.multiselect(
-    'Choose up to 5 ingredients:',
-    fruit_options,
-    max_selections=5
+    'Choose ingredients:',
+    fruit_options
 )
 
 if ingredients_list:
