@@ -1,6 +1,7 @@
 # Import python packages
 import streamlit as st
 import requests
+import pandas as pd
 
 # Write directly to the app
 st.title("Customise Your Smoothie:cup_with_straw:")
@@ -47,15 +48,21 @@ if ingredients_list:
         # Fetch nutrition data from API
         smoothiefroot_response = requests.get(f"https://my.smoothiefroot.com/api/fruit/{search_on}")
         
-        # Convert API response to DataFrame for display
+        # Check the status code and print the response
         if smoothiefroot_response.status_code == 200:
             nutrition_data = smoothiefroot_response.json()
-            nutrition_df = pd.DataFrame(nutrition_data)
-            
-            st.subheader(f"{fruit_chosen} Nutrition Information")
-            st.dataframe(data=nutrition_df, use_container_width=True)
+
+            # Check the content of the API response
+            if isinstance(nutrition_data, dict) and 'nutrition' in nutrition_data:
+                # Convert API response to DataFrame for display
+                nutrition_df = pd.DataFrame(nutrition_data['nutrition'])
+
+                st.subheader(f"{fruit_chosen} Nutrition Information")
+                st.dataframe(data=nutrition_df, use_container_width=True)
+            else:
+                st.error(f"Unexpected data format received for {fruit_chosen}.")
         else:
-            st.error(f"Could not fetch data for {fruit_chosen}. Please try again.")
+            st.error(f"Could not fetch data for {fruit_chosen}. Status Code: {smoothiefroot_response.status_code}")
 
     # Final message to show the selected ingredients
     st.write("You selected the following ingredients for your smoothie:", ingredients_string.strip())
