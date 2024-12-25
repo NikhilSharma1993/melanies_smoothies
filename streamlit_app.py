@@ -30,21 +30,24 @@ ingredients_list = st.multiselect(
 
 # Process selected ingredients
 if ingredients_list:
-    ingredients_string = ', '.join(ingredients_list)  # Prepare for display
-    st.write('You selected:', ingredients_string)
+    ingredients_string = ', '.join(ingredients_list)
+    st.write("Ingredients:", ingredients_string)
 
-    # Nutrition information for each fruit
-    for fruit_chosen in ingredients_list:
-        st.subheader(f"{fruit_chosen} Nutrition Information")
+    # Construct query
+    insert_query = f"""
+    INSERT INTO smoothies.public.orders (ingredients, name_on_order)
+    VALUES ('{ingredients_string}', '{name_on_order}')
+    """
+    st.write("Executing query:", insert_query)
+
+    time_to_insert = st.button('Submit Order')
+
+    if time_to_insert:
         try:
-            response = requests.get(f"https://my.smoothiefroot.com/api/fruit/{fruit_chosen.lower()}")
-            if response.status_code == 200:
-                nutrition_data = response.json()
-                st.dataframe(data=nutrition_data, use_container_width=True)
-            else:
-                st.warning(f"Nutrition information for {fruit_chosen} is not available.")
-        except requests.RequestException as e:
-            st.error(f"Error fetching data for {fruit_chosen}: {e}")
+            session.sql(insert_query).collect()
+            st.success('Your Smoothie is ordered!', icon="✅")
+        except Exception as e:
+            st.error(f"Error during order submission: {e}")
 
     # SQL query using parameterized statement to avoid SQL injection
     insert_query = """INSERT INTO smoothies.public.orders (ingredients, name_on_order) VALUES (%s, %s)"""
